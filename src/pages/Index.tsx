@@ -1,95 +1,74 @@
-import { useState, useMemo, useCallback } from 'react';
-import { catalogData, setores, CatalogItem } from '@/data/catalog-data';
-import { CatalogToolbar } from '@/components/CatalogToolbar';
-import { CatalogItemCard } from '@/components/CatalogItemCard';
-import { CatalogLightbox } from '@/components/CatalogLightbox';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useState, useMemo } from 'react';
 import Fuse from 'fuse.js';
+import { catalogData, setores, type Product } from '@/data/catalog-data';
+import { CatalogToolbar } from '@/components/CatalogToolbar';
+import { ProductCard } from '@/components/ProductCard';
+import { ProductLightbox } from '@/components/ProductLightbox';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 const Index = () => {
-  // State with localStorage persistence
   const [searchQuery, setSearchQuery] = useLocalStorage('catalog-search', '');
   const [selectedSetores, setSelectedSetores] = useLocalStorage<string[]>('catalog-setores', []);
-  const [onlyWithImage, setOnlyWithImage] = useLocalStorage('catalog-only-image', false);
-  const [sortBy, setSortBy] = useLocalStorage<'codigo-asc' | 'codigo-desc' | 'descricao-asc' | 'descricao-desc' | 'setor'>('catalog-sort', 'codigo-asc');
+  const [onlyWithImage, setOnlyWithImage] = useLocalStorage('catalog-only-images', false);
+  const [sortBy, setSortBy] = useLocalStorage<'produtoId' | 'descricao' | 'setor'>('catalog-sort', 'produtoId');
+  const [sortOrder, setSortOrder] = useLocalStorage<'asc' | 'desc'>('catalog-order', 'asc');
+  const [lightboxData, setLightboxData] = useState<{ 
+    imageUrls: string[]; 
+    product: Product;
+    imageIndex: number;
+  } | null>(null);
+  const [currentProductIndex, setCurrentProductIndex] = useState(0);
 
-  // Lightbox state
-  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
-  const [lightboxItem, setLightboxItem] = useState<CatalogItem | null>(null);
+  // Search with Fuse.js
+  const fuse = useMemo(() => {
+    return new Fuse(catalogData, {
+      keys: ['produtoId', 'produtoDescricao', 'itens.codigo', 'itens.descricao', 'itens.setor'],
+      threshold: 0.35,
+      includeScore: true,
+    });
+  }, []);
 
-  // Filter and search items
-  const filteredAndSortedItems = useMemo(() => {
-    let items = [...catalogData];
+  const filteredProducts = useMemo(() => {
+    let products = searchQuery ? fuse.search(searchQuery).map((result) => result.item) : [...catalogData];
 
-    // Filter by setor
     if (selectedSetores.length > 0) {
-      items = items.filter((item) => selectedSetores.includes(item.setor));
+      products = products.filter((product) => product.itens.some((item) => selectedSetores.includes(item.setor)));
     }
 
-    // Search with Fuse.js
-    if (searchQuery.trim()) {
-      const fuse = new Fuse(items, {
-        keys: ['codigo', 'descricao', 'setor', 'produtoId', 'produtoDescricao'],
-        threshold: 0.35,
-        ignoreLocation: true,
-      });
-      items = fuse.search(searchQuery).map((result) => result.item);
-    }
-
-    // Sort
-    items.sort((a, b) => {
-      switch (sortBy) {
-        case 'codigo-asc':
-          return a.codigo.localeCompare(b.codigo);
-        case 'codigo-desc':
-          return b.codigo.localeCompare(a.codigo);
-        case 'descricao-asc':
-          return a.descricao.localeCompare(b.descricao);
-        case 'descricao-desc':
-          return b.descricao.localeCompare(a.descricao);
-        case 'setor':
-          return a.setor.localeCompare(b.setor);
-        default:
-          return 0;
+    products.sort((a, b) => {
+      let compareA: string, compareB: string;
+      if (sortBy === 'produtoId') {
+        compareA = a.produtoId;
+        compareB = b.produtoId;
+      } else if (sortBy === 'descricao') {
+        compareA = a.produtoDescricao;
+        compareB = b.produtoDescricao;
+      } else {
+        compareA = a.itens[0]?.setor || '';
+        compareB = b.itens[0]?.setor || '';
       }
+      const comparison = compareA.localeCompare(compareB);
+      return sortOrder === 'asc' ? comparison : -comparison;
     });
 
-    return items;
-  }, [searchQuery, selectedSetores, sortBy]);
+    return products;
+  }, [searchQuery, selectedSetores, onlyWithImage, sortBy, sortOrder, fuse]);
 
-  // Note: "onlyWithImage" filter is handled by the card component itself
-  // as it needs to check image availability asynchronously
+  const handleImageClick = (imageUrls: string[], product: Product, imageIndex: number = 0) => {
+    const productIndex = filteredProducts.findIndex((p) => p.produtoId === product.produtoId);
+    setCurrentProductIndex(productIndex);
+    setLightboxData({ imageUrls, product, imageIndex });
+  };
 
-  // Handle image click
-  const handleImageClick = useCallback((imageUrl: string, item: CatalogItem) => {
-    setLightboxImage(imageUrl);
-    setLightboxItem(item);
-  }, []);
-
-  const closeLightbox = useCallback(() => {
-    setLightboxImage(null);
-    setLightboxItem(null);
-  }, []);
-
-  // Navigation in lightbox
-  const currentIndex = lightboxItem
-    ? filteredAndSortedItems.findIndex((item) => item.codigo === lightboxItem.codigo)
-    : -1;
-
-  const handlePrevious = useCallback(() => {
-    if (currentIndex > 0) {
-      const prevItem = filteredAndSortedItems[currentIndex - 1];
-      setLightboxItem(prevItem);
-      // Image will be resolved by lightbox when item changes
-    }
-  }, [currentIndex, filteredAndSortedItems]);
-
-  const handleNext = useCallback(() => {
-    if (currentIndex < filteredAndSortedItems.length - 1) {
-      const nextItem = filteredAndSortedItems[currentIndex + 1];
-      setLightboxItem(nextItem);
-    }
-  }, [currentIndex, filteredAndSortedItems]);
+  const handleLightboxNavigate = (direction: 'prev' | 'next') => {
+    if (!lightboxData) return;
+    const newIndex = direction === 'prev' 
+      ? (currentProductIndex - 1 + filteredProducts.length) % filteredProducts.length
+      : (currentProductIndex + 1) % filteredProducts.length;
+    setCurrentProductIndex(newIndex);
+    const newProduct = filteredProducts[newIndex];
+    setLightboxData({ ...lightboxData, product: newProduct, imageIndex: 0 });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -101,46 +80,30 @@ const Index = () => {
         onlyWithImage={onlyWithImage}
         onOnlyWithImageChange={setOnlyWithImage}
         sortBy={sortBy}
-        onSortChange={setSortBy}
-        totalResults={filteredAndSortedItems.length}
-        availableSetores={setores}
+        onSortByChange={setSortBy}
+        sortOrder={sortOrder}
+        onSortOrderChange={setSortOrder}
+        totalResults={filteredProducts.length}
       />
 
       <main className="container py-8">
-        {filteredAndSortedItems.length === 0 ? (
-          <div className="flex min-h-[50vh] items-center justify-center">
-            <div className="text-center">
-              <p className="text-lg font-medium text-muted-foreground">
-                Nenhum item encontrado
-              </p>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Tente ajustar os filtros ou a busca
-              </p>
-            </div>
-          </div>
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-            {filteredAndSortedItems.map((item) => (
-              <CatalogItemCard
-                key={item.codigo}
-                item={item}
-                onImageClick={handleImageClick}
-              />
-            ))}
-          </div>
-        )}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {filteredProducts.map((product) => (
+            <ProductCard key={product.produtoId} product={product} onImageClick={handleImageClick} />
+          ))}
+        </div>
       </main>
 
-      <CatalogLightbox
-        isOpen={!!lightboxImage}
-        onClose={closeLightbox}
-        imageUrl={lightboxImage}
-        item={lightboxItem}
-        onPrevious={handlePrevious}
-        onNext={handleNext}
-        hasPrevious={currentIndex > 0}
-        hasNext={currentIndex < filteredAndSortedItems.length - 1}
-      />
+      {lightboxData && (
+        <ProductLightbox
+          isOpen={!!lightboxData}
+          onClose={() => setLightboxData(null)}
+          imageUrls={lightboxData.imageUrls}
+          product={lightboxData.product}
+          initialImageIndex={lightboxData.imageIndex}
+          onNavigate={handleLightboxNavigate}
+        />
+      )}
     </div>
   );
 };
