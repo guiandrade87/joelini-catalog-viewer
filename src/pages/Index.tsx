@@ -17,7 +17,6 @@ const Index = () => {
     product: Product;
     imageIndex: number;
   } | null>(null);
-  const [currentProductIndex, setCurrentProductIndex] = useState(0);
 
   // Search with Fuse.js
   const fuse = useMemo(() => {
@@ -55,19 +54,7 @@ const Index = () => {
   }, [searchQuery, selectedSetores, onlyWithImage, sortBy, sortOrder, fuse]);
 
   const handleImageClick = (imageUrls: string[], product: Product, imageIndex: number = 0) => {
-    const productIndex = filteredProducts.findIndex((p) => p.produtoId === product.produtoId);
-    setCurrentProductIndex(productIndex);
     setLightboxData({ imageUrls, product, imageIndex });
-  };
-
-  const handleLightboxNavigate = (direction: 'prev' | 'next') => {
-    if (!lightboxData) return;
-    const newIndex = direction === 'prev' 
-      ? (currentProductIndex - 1 + filteredProducts.length) % filteredProducts.length
-      : (currentProductIndex + 1) % filteredProducts.length;
-    setCurrentProductIndex(newIndex);
-    const newProduct = filteredProducts[newIndex];
-    setLightboxData({ ...lightboxData, product: newProduct, imageIndex: 0 });
   };
 
   return (
@@ -101,7 +88,6 @@ const Index = () => {
           imageUrls={lightboxData.imageUrls}
           product={lightboxData.product}
           initialImageIndex={lightboxData.imageIndex}
-          onNavigate={handleLightboxNavigate}
         />
       )}
     </div>

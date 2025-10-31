@@ -121,12 +121,7 @@ export const ProductCard = ({ product, onImageClick }: ProductCardProps) => {
           <div className="space-y-2">
             {product.itens.map((item, idx) => (
               <div key={idx} className="rounded-md bg-muted/50 p-2">
-                <div className="flex items-center justify-between gap-2 mb-1">
-                  <span className="text-xs font-mono font-semibold text-foreground">{item.codigo}</span>
-                  <Badge variant="outline" className={`text-[10px] ${setorColors[item.setor]}`}>
-                    {item.setor}
-                  </Badge>
-                </div>
+                <span className="text-xs font-mono font-semibold text-foreground block mb-1">{item.codigo}</span>
                 <p className="text-xs text-muted-foreground line-clamp-2">{item.descricao}</p>
               </div>
             ))}

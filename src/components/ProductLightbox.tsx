@@ -11,7 +11,6 @@ interface ProductLightboxProps {
   imageUrls: string[];
   product: Product | null;
   initialImageIndex: number;
-  onNavigate: (direction: 'prev' | 'next') => void;
 }
 
 const setorColors: Record<string, string> = {
@@ -29,7 +28,6 @@ export const ProductLightbox = ({
   imageUrls,
   product,
   initialImageIndex,
-  onNavigate,
 }: ProductLightboxProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(initialImageIndex);
 
@@ -44,14 +42,10 @@ export const ProductLightbox = ({
       if (e.key === 'ArrowLeft') {
         if (currentImageIndex > 0) {
           setCurrentImageIndex(currentImageIndex - 1);
-        } else {
-          onNavigate('prev');
         }
       } else if (e.key === 'ArrowRight') {
         if (currentImageIndex < imageUrls.length - 1) {
           setCurrentImageIndex(currentImageIndex + 1);
-        } else {
-          onNavigate('next');
         }
       } else if (e.key === 'Escape') {
         onClose();
@@ -60,7 +54,7 @@ export const ProductLightbox = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, currentImageIndex, imageUrls.length, onNavigate, onClose]);
+  }, [isOpen, currentImageIndex, imageUrls.length, onClose]);
 
   if (!product) return null;
 
@@ -94,13 +88,8 @@ export const ProductLightbox = ({
                       variant="outline"
                       size="icon"
                       className="absolute left-4 top-1/2 -translate-y-1/2"
-                      onClick={() => {
-                        if (currentImageIndex > 0) {
-                          setCurrentImageIndex(currentImageIndex - 1);
-                        } else {
-                          onNavigate('prev');
-                        }
-                      }}
+                      onClick={() => setCurrentImageIndex(Math.max(0, currentImageIndex - 1))}
+                      disabled={currentImageIndex === 0}
                     >
                       <ChevronLeft className="h-5 w-5" />
                     </Button>
@@ -109,13 +98,8 @@ export const ProductLightbox = ({
                       variant="outline"
                       size="icon"
                       className="absolute right-4 top-1/2 -translate-y-1/2"
-                      onClick={() => {
-                        if (currentImageIndex < imageUrls.length - 1) {
-                          setCurrentImageIndex(currentImageIndex + 1);
-                        } else {
-                          onNavigate('next');
-                        }
-                      }}
+                      onClick={() => setCurrentImageIndex(Math.min(imageUrls.length - 1, currentImageIndex + 1))}
+                      disabled={currentImageIndex === imageUrls.length - 1}
                     >
                       <ChevronRight className="h-5 w-5" />
                     </Button>
@@ -157,14 +141,9 @@ export const ProductLightbox = ({
                 <div className="space-y-3">
                   {product.itens.map((item, idx) => (
                     <div key={idx} className="rounded-lg border border-border p-3 space-y-2">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-sm font-mono font-semibold text-foreground">
-                          {item.codigo}
-                        </span>
-                        <Badge className={`text-[10px] font-medium border ${setorColors[item.setor]}`}>
-                          {item.setor}
-                        </Badge>
-                      </div>
+                      <span className="text-sm font-mono font-semibold text-foreground block">
+                        {item.codigo}
+                      </span>
                       <p className="text-sm text-muted-foreground leading-tight">
                         {item.descricao}
                       </p>
