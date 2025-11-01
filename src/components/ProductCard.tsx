@@ -53,9 +53,10 @@ export const ProductCard = ({ product, onImageClick }: ProductCardProps) => {
     };
   }, [product]);
 
-  const handleImageClick = (imageIndex: number = 0) => {
-    if (imageUrls.length > 0 && !imageError) {
-      onImageClick(imageUrls, product, imageIndex);
+  const handleImageClick = async (itemCodigo: string) => {
+    const urls = await getCachedAllImagesUrl(itemCodigo);
+    if (urls.length > 0) {
+      onImageClick(urls, product, 0);
     }
   };
 
@@ -66,7 +67,7 @@ export const ProductCard = ({ product, onImageClick }: ProductCardProps) => {
         className={`relative aspect-square overflow-hidden bg-muted ${
           imageUrls.length > 0 && !imageError ? 'cursor-pointer' : ''
         }`}
-        onClick={() => handleImageClick(0)}
+        onClick={() => handleImageClick(product.itens[0].codigo)}
       >
         {isLoading ? (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -120,7 +121,11 @@ export const ProductCard = ({ product, onImageClick }: ProductCardProps) => {
         <div className="border-t border-border pt-3">
           <div className="space-y-2">
             {product.itens.map((item, idx) => (
-              <div key={idx} className="rounded-md bg-muted/50 p-2">
+              <div 
+                key={idx} 
+                className="rounded-md bg-muted/50 p-2 cursor-pointer hover:bg-muted transition-colors"
+                onClick={() => handleImageClick(item.codigo)}
+              >
                 <span className="text-xs font-mono font-semibold text-foreground block mb-1">{item.codigo}</span>
                 <p className="text-xs text-muted-foreground line-clamp-2">{item.descricao}</p>
               </div>
