@@ -15,8 +15,8 @@ export async function resolveImageUrl(codItem: string, imageIndex: number = 0): 
         img.onerror = () => resolve(false);
         img.src = url;
         
-        // Timeout after 3 seconds
-        setTimeout(() => resolve(false), 3000);
+        // Timeout after 5 seconds
+        setTimeout(() => resolve(false), 5000);
       });
       
       if (isValid) {

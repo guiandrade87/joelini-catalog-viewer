@@ -60,10 +60,10 @@ export const ProductLightbox = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl h-[90vh] p-0 gap-0">
-        <div className="flex h-full">
+      <DialogContent className="max-w-7xl h-[90vh] p-0 gap-0 sm:max-w-7xl max-w-full w-full">
+        <div className="flex flex-col sm:flex-row h-full">
           {/* Image Area */}
-          <div className="flex-1 relative bg-muted/30 flex items-center justify-center">
+          <div className="flex-1 relative bg-muted/30 flex items-center justify-center min-h-[50vh] sm:min-h-0">
             <Button
               variant="ghost"
               size="icon"
@@ -78,7 +78,7 @@ export const ProductLightbox = ({
                 <img
                   src={imageUrls[currentImageIndex]}
                   alt={product.produtoDescricao}
-                  className="max-h-full max-w-full object-contain p-8"
+                  className="max-h-full max-w-full object-contain p-4 sm:p-8"
                 />
 
                 {/* Image Navigation */}
@@ -123,8 +123,8 @@ export const ProductLightbox = ({
           </div>
 
           {/* Info Sidebar */}
-          <div className="w-96 border-l bg-background overflow-y-auto">
-            <div className="p-6 space-y-6">
+          <div className="w-full sm:w-96 border-t sm:border-t-0 sm:border-l bg-background overflow-y-auto max-h-[40vh] sm:max-h-none">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* Product Info */}
               <div>
                 <Badge variant="outline" className="font-mono text-sm font-semibold mb-2">

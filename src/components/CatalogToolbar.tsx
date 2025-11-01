@@ -45,48 +45,50 @@ export const CatalogToolbar = ({ searchQuery, onSearchChange, selectedSetores, o
             </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input placeholder="Buscar..." value={searchQuery} onChange={(e) => onSearchChange(e.target.value)} className="pl-10" />
             </div>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon"><SlidersHorizontal className="h-4 w-4" /></Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>Filtros</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <div className="px-2 py-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="only-image" className="text-sm">Apenas com imagem</Label>
-                    <Switch id="only-image" checked={onlyWithImage} onCheckedChange={onOnlyWithImageChange} />
+            <div className="flex gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="icon" className="shrink-0"><SlidersHorizontal className="h-4 w-4" /></Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>Filtros</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <div className="px-2 py-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="only-image" className="text-sm">Apenas com imagem</Label>
+                      <Switch id="only-image" checked={onlyWithImage} onCheckedChange={onOnlyWithImageChange} />
+                    </div>
                   </div>
-                </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuLabel>Setores</DropdownMenuLabel>
-                {setores.map((setor) => (
-                  <DropdownMenuCheckboxItem key={setor} checked={selectedSetores.includes(setor)} onCheckedChange={() => toggleSetor(setor)}>{setor}</DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>Setores</DropdownMenuLabel>
+                  {setores.map((setor) => (
+                    <DropdownMenuCheckboxItem key={setor} checked={selectedSetores.includes(setor)} onCheckedChange={() => toggleSetor(setor)}>{setor}</DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-            <Select value={sortBy} onValueChange={(v) => onSortByChange(v as any)}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="produtoId">Código Produto</SelectItem>
-                <SelectItem value="descricao">Descrição</SelectItem>
-                <SelectItem value="setor">Setor</SelectItem>
-              </SelectContent>
-            </Select>
+              <Select value={sortBy} onValueChange={(v) => onSortByChange(v as any)}>
+                <SelectTrigger className="w-[140px] sm:w-[180px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="produtoId">Código</SelectItem>
+                  <SelectItem value="descricao">Descrição</SelectItem>
+                  <SelectItem value="setor">Setor</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Badge variant="secondary">{totalResults} itens</Badge>
-            {selectedSetores.map((s) => <Badge key={s} variant="outline">{s}</Badge>)}
+            {selectedSetores.map((s) => <Badge key={s} variant="outline" className="text-xs">{s}</Badge>)}
           </div>
         </div>
       </div>
