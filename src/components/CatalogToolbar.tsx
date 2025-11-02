@@ -36,12 +36,9 @@ export const CatalogToolbar = ({ searchQuery, onSearchChange, selectedSetores, o
     <div className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur">
       <div className="container py-4">
         <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center gap-3 w-full">
             <img src={logoJoelini} alt="Joelini Logo" className="h-12 w-auto object-contain" />
-            <div>
-              <h1 className="text-lg font-bold">JOELINI</h1>
-              <p className="text-xs text-muted-foreground">Catálogo Digital</p>
-            </div>
+            <h1 className="text-xl font-bold" style={{ color: '#1E40AF' }}>CATÁLOGO DIGITAL</h1>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2">
