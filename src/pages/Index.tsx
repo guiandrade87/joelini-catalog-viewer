@@ -1,10 +1,11 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Fuse from 'fuse.js';
 import { catalogData, setores, type Product } from '@/data/catalog-data';
 import { CatalogToolbar } from '@/components/CatalogToolbar';
 import { ProductCard } from '@/components/ProductCard';
 import { ProductLightbox } from '@/components/ProductLightbox';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { getCachedImageUrl } from '@/utils/imageResolver';
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useLocalStorage('catalog-search', '');
@@ -17,6 +18,28 @@ const Index = () => {
     product: Product;
     imageIndex: number;
   } | null>(null);
+  const [productsWithImages, setProductsWithImages] = useState<Set<string>>(new Set());
+
+  // Check which products have images
+  useEffect(() => {
+    const checkImages = async () => {
+      const productsWithImagesSet = new Set<string>();
+      
+      for (const product of catalogData) {
+        for (const item of product.itens) {
+          const imageUrl = await getCachedImageUrl(item.codigo);
+          if (imageUrl) {
+            productsWithImagesSet.add(product.produtoId);
+            break;
+          }
+        }
+      }
+      
+      setProductsWithImages(productsWithImagesSet);
+    };
+    
+    checkImages();
+  }, []);
 
   // Search with Fuse.js
   const fuse = useMemo(() => {
@@ -32,6 +55,10 @@ const Index = () => {
 
     if (selectedSetores.length > 0) {
       products = products.filter((product) => product.itens.some((item) => selectedSetores.includes(item.setor)));
+    }
+
+    if (onlyWithImage) {
+      products = products.filter((product) => productsWithImages.has(product.produtoId));
     }
 
     products.sort((a, b) => {
@@ -51,7 +78,7 @@ const Index = () => {
     });
 
     return products;
-  }, [searchQuery, selectedSetores, onlyWithImage, sortBy, sortOrder, fuse]);
+  }, [searchQuery, selectedSetores, onlyWithImage, sortBy, sortOrder, fuse, productsWithImages]);
 
   const handleImageClick = (imageUrls: string[], product: Product, imageIndex: number = 0) => {
     setLightboxData({ imageUrls, product, imageIndex });
