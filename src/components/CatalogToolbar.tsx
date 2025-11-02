@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSepar
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { setores } from '@/data/catalog-data';
+import logoJoelini from '@/assets/logo-joelini.png';
 
 interface CatalogToolbarProps {
   searchQuery: string;
@@ -36,9 +37,7 @@ export const CatalogToolbar = ({ searchQuery, onSearchChange, selectedSetores, o
       <div className="container py-4">
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <span className="text-lg font-bold text-primary-foreground">J</span>
-            </div>
+            <img src={logoJoelini} alt="Joelini Logo" className="h-12 w-auto object-contain" />
             <div>
               <h1 className="text-lg font-bold">JOELINI</h1>
               <p className="text-xs text-muted-foreground">Catálogo Digital</p>
