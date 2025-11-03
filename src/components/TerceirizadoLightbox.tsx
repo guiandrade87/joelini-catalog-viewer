@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TerceirizadoProduct } from '@/data/terceirizados-data';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 interface TerceirizadoLightboxProps {
   isOpen: boolean;
@@ -53,10 +54,14 @@ export const TerceirizadoLightbox = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl max-h-[90vh] p-0 gap-0 overflow-hidden">
-        <div className="flex h-full flex-col">
+      <DialogContent className="max-w-7xl max-h-[90vh] p-0 gap-0">
+        <VisuallyHidden>
+          <DialogTitle>{product.produtoDescricao}</DialogTitle>
+          <DialogDescription>Visualização do produto terceirizado com imagens e itens componentes</DialogDescription>
+        </VisuallyHidden>
+        <div className="flex h-full flex-col max-h-[90vh]">
           {/* Header */}
-          <div className="border-b p-4 flex items-center justify-between">
+          <div className="border-b p-4 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
               <Badge variant="outline" className="font-mono text-sm">
                 {product.produtoId}
@@ -69,7 +74,7 @@ export const TerceirizadoLightbox = ({
           </div>
 
           {/* Content: Image and Table Side by Side */}
-          <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+          <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
             {/* Image Display */}
             <div className="flex-1 relative bg-muted/30 flex items-center justify-center p-4">
               <img
@@ -113,9 +118,11 @@ export const TerceirizadoLightbox = ({
             </div>
 
             {/* Product Details */}
-            <div className="lg:w-96 border-t lg:border-t-0 lg:border-l p-4 overflow-y-auto">
-              <h3 className="text-sm font-semibold mb-3">Itens do Produto</h3>
-              <div className="overflow-x-auto">
+            <div className="lg:w-96 border-t lg:border-t-0 lg:border-l flex flex-col overflow-hidden">
+              <div className="p-4 shrink-0">
+                <h3 className="text-sm font-semibold">Itens do Produto</h3>
+              </div>
+              <div className="overflow-y-auto overflow-x-auto px-4 pb-4">
                 <table className="w-full text-sm">
                   <thead className="border-b border-border">
                     <tr className="text-muted-foreground">
@@ -139,7 +146,7 @@ export const TerceirizadoLightbox = ({
           </div>
 
           {imageUrls.length > 1 && (
-            <div className="border-t px-4 py-2 text-xs text-muted-foreground text-center">
+            <div className="border-t px-4 py-2 text-xs text-muted-foreground text-center shrink-0">
               Use as setas ← → para navegar entre as imagens
             </div>
           )}
