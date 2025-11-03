@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Terceirizados from "./pages/Terceirizados";
 import NotFound from "./pages/NotFound";
-import { Navigation } from "./components/Navigation";
 
 const queryClient = new QueryClient();
 
@@ -16,7 +15,6 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Navigation />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/terceirizados" element={<Terceirizados />} />
