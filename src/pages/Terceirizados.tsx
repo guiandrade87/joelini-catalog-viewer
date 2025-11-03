@@ -88,7 +88,6 @@ const Terceirizados = () => {
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-3 w-full">
               <img src={logoJoelini} alt="Joelini Logo" className="h-12 w-auto object-contain" />
-              <h1 className="text-xl font-bold text-center flex-1" style={{ color: '#1E40AF' }}>CATÁLOGO DIGITAL - PRODUTOS TERCEIRIZADOS</h1>
               <div className="flex gap-2">
                 <Link to="/">
                   <Button 
@@ -107,6 +106,7 @@ const Terceirizados = () => {
                   </Button>
                 </Link>
               </div>
+              <div className="h-12 w-auto" />
             </div>
 
             <div className="flex flex-col sm:flex-row gap-2">

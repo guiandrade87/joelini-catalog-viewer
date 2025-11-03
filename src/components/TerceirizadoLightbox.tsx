@@ -53,7 +53,7 @@ export const TerceirizadoLightbox = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl h-[90vh] p-0 gap-0">
+      <DialogContent className="max-w-7xl max-h-[90vh] p-0 gap-0 overflow-hidden">
         <div className="flex h-full flex-col">
           {/* Header */}
           <div className="border-b p-4 flex items-center justify-between">
