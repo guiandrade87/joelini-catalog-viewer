@@ -6,13 +6,13 @@ import { TerceirizadoLightbox } from '@/components/TerceirizadoLightbox';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { getCachedImageUrl } from '@/utils/imageResolver';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, Home } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import logoJoelini from '@/assets/logo-joelini.png';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 const Terceirizados = () => {
@@ -79,8 +79,6 @@ const Terceirizados = () => {
     setLightboxData({ imageUrls, product, imageIndex });
   };
 
-  const location = useLocation();
-
   return (
     <div className="min-h-screen bg-background">
       <div className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur">
@@ -88,25 +86,12 @@ const Terceirizados = () => {
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-3 w-full">
               <img src={logoJoelini} alt="Joelini Logo" className="h-12 w-auto object-contain" />
-              <div className="flex gap-2">
-                <Link to="/">
-                  <Button 
-                    variant={location.pathname === '/' ? 'default' : 'outline'}
-                    size="sm"
-                  >
-                    Catálogo Geral
-                  </Button>
-                </Link>
-                <Link to="/terceirizados">
-                  <Button 
-                    variant={location.pathname === '/terceirizados' ? 'default' : 'outline'}
-                    size="sm"
-                  >
-                    Terceirizados
-                  </Button>
-                </Link>
-              </div>
-              <div className="h-12 w-auto" />
+              <Link to="/">
+                <Button variant="outline" size="sm">
+                  <Home className="h-4 w-4 mr-2" />
+                  Página Inicial
+                </Button>
+              </Link>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-2">

@@ -1,4 +1,4 @@
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Search, SlidersHorizontal, Home } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { setores } from '@/data/catalog-data';
 import logoJoelini from '@/assets/logo-joelini.png';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface CatalogToolbarProps {
   searchQuery: string;
@@ -25,8 +25,6 @@ interface CatalogToolbarProps {
 }
 
 export const CatalogToolbar = ({ searchQuery, onSearchChange, selectedSetores, onSetoresChange, onlyWithImage, onOnlyWithImageChange, sortBy, onSortByChange, sortOrder, onSortOrderChange, totalResults }: CatalogToolbarProps) => {
-  const location = useLocation();
-  
   const toggleSetor = (setor: string) => {
     if (selectedSetores.includes(setor)) {
       onSetoresChange(selectedSetores.filter((s) => s !== setor));
@@ -41,25 +39,12 @@ export const CatalogToolbar = ({ searchQuery, onSearchChange, selectedSetores, o
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between gap-3 w-full">
             <img src={logoJoelini} alt="Joelini Logo" className="h-12 w-auto object-contain" />
-            <div className="flex gap-2">
-              <Link to="/">
-                <Button 
-                  variant={location.pathname === '/' ? 'default' : 'outline'}
-                  size="sm"
-                >
-                  Catálogo Geral
-                </Button>
-              </Link>
-              <Link to="/terceirizados">
-                <Button 
-                  variant={location.pathname === '/terceirizados' ? 'default' : 'outline'}
-                  size="sm"
-                >
-                  Terceirizados
-                </Button>
-              </Link>
-            </div>
-            <div className="h-12 w-auto" />
+            <Link to="/">
+              <Button variant="outline" size="sm">
+                <Home className="h-4 w-4 mr-2" />
+                Página Inicial
+              </Button>
+            </Link>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2">
