@@ -121,25 +121,47 @@ export const ProductCard = ({ product, onImageClick }: ProductCardProps) => {
 
         {/* Items Table */}
         <div className="border-t border-border pt-3">
-          <div className="space-y-2">
-            {product.itens.map((item, idx) => (
-              <div 
-                key={idx} 
-                className="rounded-md bg-muted/50 p-2 cursor-pointer hover:bg-muted transition-colors"
-                onClick={() => handleImageClick(item.codigo)}
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-mono font-semibold text-foreground">{item.codigo}</span>
-                  {'quantidade' in item && (
-                    <Badge variant="secondary" className="text-[10px] font-semibold">
-                      Qtd: {item.quantidade}
-                    </Badge>
-                  )}
+          {'quantidade' in product.itens[0] ? (
+            // Tabela para itens com quantidade
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-2 px-2 font-semibold text-foreground bg-yellow-400">Código</th>
+                    <th className="text-left py-2 px-2 font-semibold text-foreground bg-yellow-400">Descrição</th>
+                    <th className="text-center py-2 px-2 font-semibold text-foreground bg-yellow-400">Quantidade</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {product.itens.map((item, idx) => (
+                    <tr 
+                      key={idx}
+                      className="border-b border-border last:border-0 hover:bg-muted/50 cursor-pointer transition-colors"
+                      onClick={() => handleImageClick(item.codigo)}
+                    >
+                      <td className="py-2 px-2 font-mono font-semibold text-foreground">{'codigo' in item ? item.codigo : ''}</td>
+                      <td className="py-2 px-2 text-muted-foreground">{'descricao' in item ? item.descricao : ''}</td>
+                      <td className="py-2 px-2 text-center font-semibold text-foreground">{'quantidade' in item ? item.quantidade : ''}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            // Layout original para itens com setor
+            <div className="space-y-2">
+              {product.itens.map((item, idx) => (
+                <div 
+                  key={idx} 
+                  className="rounded-md bg-muted/50 p-2 cursor-pointer hover:bg-muted transition-colors"
+                  onClick={() => handleImageClick(item.codigo)}
+                >
+                  <span className="text-xs font-mono font-semibold text-foreground block mb-1">{item.codigo}</span>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{item.descricao}</p>
                 </div>
-                <p className="text-xs text-muted-foreground line-clamp-2">{item.descricao}</p>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </Card>
