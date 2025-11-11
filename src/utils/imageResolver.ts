@@ -1,7 +1,7 @@
 const BASE_URL = 'https://catalogo.joelini.com.br/Qualidade';
 
 export async function resolveImageUrl(codItem: string, imageIndex: number = 0): Promise<string | null> {
-  const extensions = ['.webp', '.jpg', '.png'];
+  const extensions = ['.png', '.webp', '.jpg'];
   const suffix = imageIndex === 0 ? '' : `-${imageIndex}`;
   
   for (const ext of extensions) {
