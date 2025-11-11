@@ -54,7 +54,9 @@ const Index = () => {
     let products = searchQuery ? fuse.search(searchQuery).map((result) => result.item) : [...catalogData];
 
     if (selectedSetores.length > 0) {
-      products = products.filter((product) => product.itens.some((item) => selectedSetores.includes(item.setor)));
+      products = products.filter((product) => 
+        product.itens.some((item) => 'setor' in item && selectedSetores.includes(item.setor))
+      );
     }
 
     if (onlyWithImage) {
@@ -70,8 +72,8 @@ const Index = () => {
         compareA = a.produtoDescricao;
         compareB = b.produtoDescricao;
       } else {
-        compareA = a.itens[0]?.setor || '';
-        compareB = b.itens[0]?.setor || '';
+        compareA = 'setor' in a.itens[0] ? a.itens[0].setor : '';
+        compareB = 'setor' in b.itens[0] ? b.itens[0].setor : '';
       }
       const comparison = compareA.localeCompare(compareB);
       return sortOrder === 'asc' ? comparison : -comparison;

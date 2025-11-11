@@ -108,9 +108,11 @@ export const ProductCard = ({ product, onImageClick }: ProductCardProps) => {
           <Badge variant="outline" className="font-mono text-xs font-semibold">
             {product.produtoId}
           </Badge>
-          <Badge className={`text-[10px] font-medium border ${setorColors[product.itens[0]?.setor]}`}>
-            {product.itens[0]?.setor}
-          </Badge>
+          {'setor' in product.itens[0] && (
+            <Badge className={`text-[10px] font-medium border ${setorColors[product.itens[0].setor]}`}>
+              {product.itens[0].setor}
+            </Badge>
+          )}
         </div>
 
         <h3 className="mb-3 line-clamp-2 text-sm font-semibold leading-tight text-foreground">
