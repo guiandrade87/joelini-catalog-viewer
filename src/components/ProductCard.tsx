@@ -125,23 +125,23 @@ export const ProductCard = ({ product, onImageClick }: ProductCardProps) => {
             // Tabela para itens com quantidade
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left py-2 px-2 font-semibold text-foreground bg-yellow-400">Código</th>
-                    <th className="text-left py-2 px-2 font-semibold text-foreground bg-yellow-400">Descrição</th>
-                    <th className="text-center py-2 px-2 font-semibold text-foreground bg-yellow-400">Quantidade</th>
+                <thead className="border-b border-border">
+                  <tr className="text-muted-foreground">
+                    <th className="pb-2 text-left font-medium">Código</th>
+                    <th className="pb-2 text-left font-medium">Descrição</th>
+                    <th className="pb-2 text-right font-medium">Qtd.</th>
                   </tr>
                 </thead>
                 <tbody>
                   {product.itens.map((item, idx) => (
                     <tr 
                       key={idx}
-                      className="border-b border-border last:border-0 hover:bg-muted/50 cursor-pointer transition-colors"
+                      className="border-b border-border/50 last:border-0 hover:bg-muted/50 cursor-pointer transition-colors"
                       onClick={() => handleImageClick(item.codigo)}
                     >
-                      <td className="py-2 px-2 font-mono font-semibold text-foreground">{'codigo' in item ? item.codigo : ''}</td>
-                      <td className="py-2 px-2 text-muted-foreground">{'descricao' in item ? item.descricao : ''}</td>
-                      <td className="py-2 px-2 text-center font-semibold text-foreground">{'quantidade' in item ? item.quantidade : ''}</td>
+                      <td className="py-2 font-mono text-xs font-semibold">{'codigo' in item ? item.codigo : ''}</td>
+                      <td className="py-2 text-xs line-clamp-2">{'descricao' in item ? item.descricao : ''}</td>
+                      <td className="py-2 text-right font-medium">{'quantidade' in item ? item.quantidade : ''}</td>
                     </tr>
                   ))}
                 </tbody>

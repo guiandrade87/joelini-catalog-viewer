@@ -143,18 +143,43 @@ export const ProductLightbox = ({
               {/* Items Table */}
               <div>
                 <h3 className="text-sm font-semibold text-foreground mb-3">Itens/Componentes</h3>
-                <div className="space-y-3">
-                  {product.itens.map((item, idx) => (
-                    <div key={idx} className="rounded-lg border border-border p-3 space-y-2">
-                      <span className="text-sm font-mono font-semibold text-foreground block">
-                        {item.codigo}
-                      </span>
-                      <p className="text-sm text-muted-foreground leading-tight">
-                        {item.descricao}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                {'quantidade' in product.itens[0] ? (
+                  // Tabela para itens com quantidade
+                  <div className="overflow-x-auto border border-border rounded-lg">
+                    <table className="w-full text-xs">
+                      <thead className="border-b border-border">
+                        <tr className="text-muted-foreground">
+                          <th className="pb-2 pt-2 px-3 text-left font-medium">Código</th>
+                          <th className="pb-2 pt-2 px-3 text-left font-medium">Descrição</th>
+                          <th className="pb-2 pt-2 px-3 text-right font-medium">Qtd.</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {product.itens.map((item, idx) => (
+                          <tr key={idx} className="border-b border-border/50 last:border-0">
+                            <td className="py-2 px-3 font-mono text-xs font-semibold">{'codigo' in item ? item.codigo : ''}</td>
+                            <td className="py-2 px-3 text-xs">{'descricao' in item ? item.descricao : ''}</td>
+                            <td className="py-2 px-3 text-right font-medium">{'quantidade' in item ? item.quantidade : ''}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  // Layout original para itens com setor
+                  <div className="space-y-3">
+                    {product.itens.map((item, idx) => (
+                      <div key={idx} className="rounded-lg border border-border p-3 space-y-2">
+                        <span className="text-sm font-mono font-semibold text-foreground block">
+                          {item.codigo}
+                        </span>
+                        <p className="text-sm text-muted-foreground leading-tight">
+                          {item.descricao}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Navigation Hint */}
