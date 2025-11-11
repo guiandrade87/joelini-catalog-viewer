@@ -128,7 +128,14 @@ export const ProductCard = ({ product, onImageClick }: ProductCardProps) => {
                 className="rounded-md bg-muted/50 p-2 cursor-pointer hover:bg-muted transition-colors"
                 onClick={() => handleImageClick(item.codigo)}
               >
-                <span className="text-xs font-mono font-semibold text-foreground block mb-1">{item.codigo}</span>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-mono font-semibold text-foreground">{item.codigo}</span>
+                  {'quantidade' in item && (
+                    <Badge variant="secondary" className="text-[10px] font-semibold">
+                      Qtd: {item.quantidade}
+                    </Badge>
+                  )}
+                </div>
                 <p className="text-xs text-muted-foreground line-clamp-2">{item.descricao}</p>
               </div>
             ))}
