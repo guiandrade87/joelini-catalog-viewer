@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ImageOff, Loader2 } from 'lucide-react';
 import { Product } from '@/data/catalog-data';
-import { getCachedAllImagesUrl } from '@/utils/imageResolver';
+import { getCachedAllProductImagesUrl } from '@/utils/imageResolver';
 
 interface ProductCardProps {
   product: Product;
@@ -31,7 +31,7 @@ export const ProductCard = ({ product, onImageClick }: ProductCardProps) => {
       setIsLoading(true);
       // Load images for the first item only (for card display)
       if (product.itens.length > 0) {
-        const urls = await getCachedAllImagesUrl(product.itens[0].codigo);
+        const urls = await getCachedAllProductImagesUrl(product.produtoId, product.itens[0].codigo);
         
         if (mounted) {
           setImageUrls(urls);
@@ -54,7 +54,7 @@ export const ProductCard = ({ product, onImageClick }: ProductCardProps) => {
   }, [product]);
 
   const handleImageClick = async (itemCodigo: string) => {
-    const urls = await getCachedAllImagesUrl(itemCodigo);
+    const urls = await getCachedAllProductImagesUrl(product.produtoId, itemCodigo);
     if (urls.length > 0) {
       onImageClick(urls, product, 0);
     }

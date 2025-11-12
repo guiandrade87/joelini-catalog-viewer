@@ -4,44 +4,44 @@ export async function resolveImageUrl(codItem: string, imageIndex: number = 0): 
   const extensions = ['.png', '.webp', '.jpg'];
   const suffix = imageIndex === 0 ? '' : `-${imageIndex}`;
   
-  console.log(`🔍 Resolving image for item: ${codItem}, index: ${imageIndex}`);
-  
   for (const ext of extensions) {
     const url = `${BASE_URL}/${codItem}${suffix}${ext}`;
-    console.log(`🔗 Trying URL: ${url}`);
     
     try {
       // Try to load image using Image() constructor
       const isValid = await new Promise<boolean>((resolve) => {
         const img = new Image();
-        img.onload = () => {
-          console.log(`✅ Image loaded successfully: ${url}`);
-          resolve(true);
-        };
-        img.onerror = (error) => {
-          console.log(`❌ Image failed to load: ${url}`, error);
-          resolve(false);
-        };
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
         img.src = url;
         
         // Timeout after 5 seconds
-        setTimeout(() => {
-          console.log(`⏱️ Timeout for: ${url}`);
-          resolve(false);
-        }, 5000);
+        setTimeout(() => resolve(false), 5000);
       });
       
       if (isValid) {
         return url;
       }
     } catch (error) {
-      console.log(`⚠️ Error trying to load: ${url}`, error);
       continue;
     }
   }
   
-  console.log(`🚫 No valid image found for item: ${codItem}`);
   return null;
+}
+
+// Try to resolve image using product ID first, then item code
+export async function resolveProductImageUrl(productId: string, itemCode: string, imageIndex: number = 0): Promise<string | null> {
+  // First try with product ID
+  let url = await resolveImageUrl(productId, imageIndex);
+  if (url) return url;
+  
+  // If product ID doesn't match item code, try with item code
+  if (productId !== itemCode) {
+    url = await resolveImageUrl(itemCode, imageIndex);
+  }
+  
+  return url;
 }
 
 // Resolve all images for a given item (tries up to 5 images)
@@ -51,6 +51,23 @@ export async function resolveAllImagesUrl(codItem: string): Promise<string[]> {
   // Try to find multiple images (3346.webp, 3346-1.webp, 3346-2.webp, etc.)
   for (let i = 0; i < 5; i++) {
     const url = await resolveImageUrl(codItem, i);
+    if (url) {
+      images.push(url);
+    } else {
+      // Stop trying if we don't find the next image
+      break;
+    }
+  }
+  
+  return images;
+}
+
+// Resolve all images trying product ID first, then item code
+export async function resolveAllProductImagesUrl(productId: string, itemCode: string): Promise<string[]> {
+  const images: string[] = [];
+  
+  for (let i = 0; i < 5; i++) {
+    const url = await resolveProductImageUrl(productId, itemCode, i);
     if (url) {
       images.push(url);
     } else {
@@ -84,6 +101,17 @@ export async function getCachedAllImagesUrl(codItem: string): Promise<string[]> 
   
   const urls = await resolveAllImagesUrl(codItem);
   allImagesCache.set(codItem, urls);
+  return urls;
+}
+
+export async function getCachedAllProductImagesUrl(productId: string, itemCode: string): Promise<string[]> {
+  const cacheKey = `${productId}-${itemCode}`;
+  if (allImagesCache.has(cacheKey)) {
+    return allImagesCache.get(cacheKey) || [];
+  }
+  
+  const urls = await resolveAllProductImagesUrl(productId, itemCode);
+  allImagesCache.set(cacheKey, urls);
   return urls;
 }
 
